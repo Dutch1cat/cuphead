@@ -22,16 +22,13 @@ jobs:
         pip install pyinstaller
         
     - name: Build executable
+      shell: cmd
       run: |
-        # Opzione 1: Comando diretto
         pyinstaller --onefile --noconsole ^
           --add-data "main.py;." ^
           --add-data "level2.py;." ^
           --add-data "images;images" ^
           menu.py
-        
-        # Opzione 2: Se usi il file .spec (decommentare e commentare sopra)
-        # pyinstaller menu.spec
         
     - name: Upload executable
       uses: actions/upload-artifact@v4
