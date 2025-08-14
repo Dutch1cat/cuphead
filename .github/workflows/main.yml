@@ -26,7 +26,7 @@ jobs:
       run: |
         pyinstaller --onefile --noconsole ^
           --add-data "main.py;." ^
-          --add-data "level2.py;." ^
+          --add-data "livello2.py;." ^
           --add-data "images;images" ^
           menu.py
         
