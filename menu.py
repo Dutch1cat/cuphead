@@ -1,6 +1,7 @@
 import pygame
 import sys
 import subprocess
+import os
 
 pygame.init()
 screen = pygame.display.set_mode((800, 600))
@@ -20,6 +21,14 @@ levels = [
 ]
 
 selected_index = 0
+
+def get_resource_path(relative_path):
+    """Ottieni il percorso corretto per le risorse, sia in sviluppo che compilato"""
+    if hasattr(sys, '_MEIPASS'):
+        # Quando è compilato con PyInstaller
+        return os.path.join(sys._MEIPASS, relative_path)
+    # Quando è in sviluppo
+    return os.path.join(os.path.dirname(__file__), relative_path)
 
 def draw_menu():
     screen.fill(GRAY)
@@ -53,7 +62,8 @@ def menu_loop():
                 elif event.key == pygame.K_UP:
                     selected_index = (selected_index - 1) % len(levels)
                 elif event.key == pygame.K_RETURN:
-                    subprocess.Popen(["python", levels[selected_index]["file"]])
+                    launch_script = get_resource_path(levels[selected_index]["file"])
+                    subprocess.run(["python", launch_script])
                     pygame.quit()
                     sys.exit()
 
