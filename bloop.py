@@ -42,7 +42,7 @@ class Bloop:
         self.melee_active = False
         self.melee_start_time = 0
         self.max_hp = 100
-        self.current_hp = 100
+        self.current_hp = self.max_hp
         self.dead = False
         self.die_sprite = None
         self.die_y = self.y
