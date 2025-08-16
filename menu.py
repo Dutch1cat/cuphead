@@ -2,6 +2,9 @@ import pygame
 import sys
 import subprocess
 import os
+import main
+import livello2
+import livello3
 
 pygame.init()
 screen = pygame.display.set_mode((800, 600))
@@ -15,9 +18,9 @@ YELLOW = (255, 255, 0)
 
 # Livelli
 levels = [
-    {"label": "Livello 1: Sir Blub", "file": "main.py"},
-    {"label": "Livello 2: Chef Plu", "file": "livello2.py"},
-    {"label": "Livello 3: ???", "file": "livello3.py"},
+    {"label": "Livello 1: Sir Blub", "file": "main.py", "number": 1},
+    {"label": "Livello 2: Chef Plu", "file": "livello2.py", "number": 2},
+    {"label": "Livello 3: ???", "file": "livello3.py", "number": 3},
 ]
 
 selected_index = 0
@@ -62,9 +65,11 @@ def menu_loop():
                 elif event.key == pygame.K_UP:
                     selected_index = (selected_index - 1) % len(levels)
                 elif event.key == pygame.K_RETURN:
-                    launch_script = get_resource_path(levels[selected_index]["file"])
-                    subprocess.run(["python", launch_script])
-                    pygame.quit()
-                    sys.exit()
+                    if levels[selected_index]["number"] == 1:
+                        main.main_loop()
+                    elif levels[selected_index]["number"] == 2:
+                        livello2.main_loop()
+                    elif levels[selected_index]["number"] == 3:
+                        livello3.main_loop()
 
 menu_loop()
