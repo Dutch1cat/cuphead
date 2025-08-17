@@ -11,7 +11,7 @@ set "GAME_PATH=%HOME_DIR%\%GAME_FOLDER_NAME%"
 :: Nome del file eseguibile del gioco
 set "EXE_NAME=menu.exe"
 :: Nome del file ZIP da scaricare
-set "ZIP_NAME=bloop.zip"
+set "ZIP_NAME=slime_souls.zip"
 :: URL COMPLETO del tuo file ZIP su GitHub (o qualsiasi altra fonte diretta)
 :: --- *** IMPORTANTE: DEVI SOSTITUIRE QUESTO URL CON QUELLO REALE DEL TUO FILE ZIP *** ---
 :: Puoi trovare questo URL se hai caricato il file ZIP come "Release Asset" o direttamente nel tuo repository.
