@@ -15,7 +15,7 @@ set "ZIP_NAME=bloop.zip"
 :: URL COMPLETO del tuo file ZIP su GitHub (o qualsiasi altra fonte diretta)
 :: --- *** IMPORTANTE: DEVI SOSTITUIRE QUESTO URL CON QUELLO REALE DEL TUO FILE ZIP *** ---
 :: Puoi trovare questo URL se hai caricato il file ZIP come "Release Asset" o direttamente nel tuo repository.
-set "GITHUB_ZIP_URL=https://github.com/Dutch1cat/cuphead/raw/refs/heads/main/slime_souls.zip"
+set "GITHUB_ZIP_URL=https://github.com/YOUR_USERNAME/YOUR_REPO_NAME/releases/download/YOUR_TAG/bloop.zip"
 
 :: === Inizio Script ===
 echo Controllo la presenza di "%GAME_FOLDER_NAME%" in "%HOME_DIR%"...
@@ -30,9 +30,8 @@ if exist "%GAME_PATH%\%EXE_NAME%" (
 
     :: === Download del file ZIP ===
     echo Download di "%ZIP_NAME%" da GitHub...
-    :: Utilizza PowerShell per scaricare il file. %TEMP% è una cartella temporanea di Windows.
-    powershell -Command "(New-Object System.Net.WebClient).DownloadFile('%GITHUB_ZIP_URL%', '%TEMP%\%ZIP_NAME%')"
-    :: Controlla se il download ha avuto successo
+    set "DOWNLOAD_PATH=%TEMP%\%ZIP_NAME%"
+    powershell -Command "(New-Object System.Net.WebClient).DownloadFile('%GITHUB_ZIP_URL%', '%DOWNLOAD_PATH%')"
     if errorlevel 1 (
         echo Errore: Impossibile scaricare "%ZIP_NAME%". Controlla la tua connessione internet o l'URL.
         pause
@@ -47,23 +46,60 @@ if exist "%GAME_PATH%\%EXE_NAME%" (
         mkdir "%GAME_PATH%"
     )
 
-    :: === Estrazione del file ZIP ===
-    echo Estrazione di "%ZIP_NAME%" in "%GAME_PATH%"...
-    :: Utilizza PowerShell per decomprimere il file.
-    :: Poiché la tua GitHub Action carica i *contenuti* della cartella 'menu' nel ZIP,
-    :: l'estrazione diretta in %GAME_PATH% posizionerà correttamente i file (es. menu.exe, images/).
-    powershell -Command "Expand-Archive -Path '%TEMP%\%ZIP_NAME%' -DestinationPath '%GAME_PATH%' -Force"
-    :: Controlla se l'estrazione ha avuto successo
-    if errorlevel 1 (
-        echo Errore: Impossibile estrarre "%ZIP_NAME%".
-        pause
-        exit /b 1
-    )
-    echo Estrazione completata.
+    :: === Estrazione del file ZIP in una cartella temporanea dedicata ===
+    :: Questa cartella temporanea si userà SOLO per l'estrazione iniziale.
+    set "EXTRACT_TEMP_DIR=%TEMP%\SlimeSoulsExtracted"
+    echo Eliminazione di vecchi file temporanei di estrazione (se presenti)...
+    if exist "%EXTRACT_TEMP_DIR%" rd /s /q "%EXTRACT_TEMP_DIR%" >nul 2>nul
+    mkdir "%EXTRACT_TEMP_DIR%" >nul 2>nul
 
-    :: === Pulizia ===
+    echo Estrazione di "%ZIP_NAME%" in "%EXTRACT_TEMP_DIR%"...
+    powershell -Command "Expand-Archive -Path '%DOWNLOAD_PATH%' -DestinationPath '%EXTRACT_TEMP_DIR%' -Force"
+    if errorlevel 1 (
+        echo Errore: Impossibile estrarre "%ZIP_NAME%" in "%EXTRACT_TEMP_DIR%".
+        pause
+        goto :cleanup_and_exit
+    )
+    echo Estrazione completata nella cartella temporanea.
+
+    :: === Spostamento del contenuto estratto nella directory finale del gioco ===
+    set "ACTUAL_GAME_ROOT_FOUND=false"
+    set "SOURCE_DIR_FOR_MOVE="
+
+    :: Cerca il file menu.exe all'interno della cartella temporanea di estrazione.
+    :: Questo ci aiuta a trovare la vera "radice" del gioco all'interno del file zip.
+    for /f "delims=" %%A in ('dir /s /b "%EXTRACT_TEMP_DIR%\%EXE_NAME%"') do (
+        set "SOURCE_DIR_FOR_MOVE=%%~dpA"
+        set "ACTUAL_GAME_ROOT_FOUND=true"
+        goto :found_game_root
+    )
+
+    :found_game_root
+    if "%ACTUAL_GAME_ROOT_FOUND%"=="true" (
+        echo Spostamento del contenuto del gioco da "%SOURCE_DIR_FOR_MOVE%" a "%GAME_PATH%"...
+        :: Sposta tutti i contenuti (file e sottocartelle) dalla radice del gioco estratto alla cartella finale
+        move /y "%SOURCE_DIR_FOR_MOVE%\*" "%GAME_PATH%\" >nul
+        if errorlevel 1 (
+            echo Errore durante lo spostamento dei file.
+            pause
+            goto :cleanup_and_exit
+        )
+        :: Elimina la cartella radice del gioco estratto una volta svuotata
+        if exist "%SOURCE_DIR_FOR_MOVE%" rd /s /q "%SOURCE_DIR_FOR_MOVE%" >nul 2>nul
+    ) else (
+        echo Errore: "%EXE_NAME%" non trovato nel file ZIP estratto. Assicurati che il file ZIP sia corretto.
+        pause
+        goto :cleanup_and_exit
+    )
+
+    :: === Pulizia della cartella di estrazione temporanea ===
+    echo Pulizia della cartella di estrazione temporanea...
+    if exist "%EXTRACT_TEMP_DIR%" rd /s /q "%EXTRACT_TEMP_DIR%" >nul 2>nul
+
+    :: === Pulizia del file ZIP temporaneo ===
+    :cleanup_and_exit
     echo Eliminazione del file ZIP temporaneo...
-    del "%TEMP%\%ZIP_NAME%"
+    if exist "%DOWNLOAD_PATH%" del "%DOWNLOAD_PATH%" >nul 2>nul
     echo Pulizia completata.
 
     :: === Avvio del gioco ===
