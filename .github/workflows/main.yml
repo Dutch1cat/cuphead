@@ -24,14 +24,12 @@ jobs:
     - name: Build executable
       shell: cmd
       run: |
-        pyinstaller --onefile --noconsole ^
-          --add-data "main.py;." ^
-          --add-data "livello2.py;." ^
+        pyinstaller --noconsole ^
           --add-data "images;images" ^
           menu.py
         
-    - name: Upload executable
+    - name: Upload executable folder
       uses: actions/upload-artifact@v4
       with:
         name: bloop
-        path: dist\*
+        path: dist\menu\*
