@@ -5,11 +5,11 @@
 - Chef Plu
 - Re Globulus
 
-## commands:
+**commands**:
 - press 1 for a melee attack, bloop simply gives a punch that damages the opponent
 - press 2 for a long attack, bloop launches a green ball that damages the opponent
 
-## how to play:
+**how to play**:
 - download the slime_souls.zip file
 - extract it
 - launch launcher.bat
