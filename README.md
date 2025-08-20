@@ -16,4 +16,5 @@
 - download the slime_souls.zip file
 - extract it
 - launch menu.exe
+- click "more info" and then execute anyway (if you dont trust, you can scansion it with virustotal, its safe)
 - enjoy
