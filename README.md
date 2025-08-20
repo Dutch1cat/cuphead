@@ -15,5 +15,5 @@
 **how to play**:
 - download the slime_souls.zip file
 - extract it
-- launch launcher.bat
+- launch menu.exe
 - enjoy
