@@ -8,7 +8,7 @@ import livello3
 
 pygame.init()
 screen = pygame.display.set_mode((800, 600))
-pygame.display.set_caption("Seleziona Livello")
+pygame.display.set_caption("Select level")
 font = pygame.font.SysFont(None, 48)
 
 WHITE = (255, 255, 255)
@@ -18,9 +18,9 @@ YELLOW = (255, 255, 0)
 
 # Livelli
 levels = [
-    {"label": "Livello 1: Sir Blub", "file": "main.py", "number": 1},
-    {"label": "Livello 2: Chef Plu", "file": "livello2.py", "number": 2},
-    {"label": "Livello 3: ???", "file": "livello3.py", "number": 3},
+    {"label": "Level 1: Sir Blub", "file": "main.py", "number": 1},
+    {"label": "Level 2: Chef Plu", "file": "livello2.py", "number": 2},
+    {"label": "Level 3: ???", "file": "livello3.py", "number": 3},
 ]
 
 selected_index = 0
@@ -35,7 +35,7 @@ def get_resource_path(relative_path):
 
 def draw_menu():
     screen.fill(GRAY)
-    title = font.render("Seleziona un livello", True, WHITE)
+    title = font.render("Select level", True, WHITE)
     screen.blit(title, (250, 50))
 
     for i, level in enumerate(levels):
